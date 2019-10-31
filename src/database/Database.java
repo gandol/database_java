@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -30,7 +31,12 @@ public class Database {
     public static void main(String[] args) {
         try {
             koneksi();
-            tampildata("transaksi");
+            if(login()){
+                tampildata("transaksi");
+            }else{
+                System.out.println("Login gagal");
+            }
+            
             stmt.close();
             conn.close();
         } catch (Exception e) {
@@ -59,6 +65,24 @@ public class Database {
         } catch (Exception e) {
             e.printStackTrace();
         }  
+    }
+    static boolean login(){
+        boolean status;
+        try {
+            status=false;
+            String username = JOptionPane.showInputDialog("masukkan email");
+            String passwd   = JOptionPane.showInputDialog("masukkan pasword");
+            String sql = "SELECT * from loginUser where email='"+username+"' AND password='"+passwd+"'";
+            hasil      = stmt.executeQuery(sql);
+            while(hasil.next()){
+                status=true;
+            }
+            return status;
+        } catch (Exception e) {
+            status=false;
+            return status;
+        }
+        
     }
     
 }

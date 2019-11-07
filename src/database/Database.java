@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package database;
+import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.DriverManager;
@@ -31,12 +32,11 @@ public class Database {
     public static void main(String[] args) {
         try {
             koneksi();
-            if(login()){
-                tampildata("transaksi");
-            }else{
-                System.out.println("Login gagal");
+            String email    = JOptionPane.showInputDialog("masukkan email");
+            String passUser = JOptionPane.showInputDialog("masukkan pass yang mau di update");
+            if(UpdateUser(email, passUser)){
+                System.out.println("Update Berhasil");
             }
-            
             stmt.close();
             conn.close();
         } catch (Exception e) {
@@ -85,4 +85,35 @@ public class Database {
         
     }
     
-}
+    static boolean UpdateUser(String email,String passUpdate)
+    {
+        boolean sukses  = false;
+        if(cekIfExist("loginUser", "email", email)){
+            try {
+                String sql  = "UPDATE loginUser set password ='"+passUpdate+"' WHERE email='"+email+"'";
+                PreparedStatement prepare = conn.prepareStatement(sql);
+                prepare.execute();
+                sukses      = true;
+            } catch (Exception e) {
+                sukses      = false;
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "User Tidak Ada","Alert",JOptionPane.ERROR_MESSAGE);
+        }
+        return sukses;
+    }
+    
+    static boolean cekIfExist(String tabel,String kolom,String value){
+        boolean found   = false;
+        try {
+            String query    = "SELECT * FROM "+tabel+" WHERE "+kolom+"='"+value+"'";
+            hasil           = stmt.executeQuery(query);
+            while(hasil.next()){
+                found=true;
+            }
+        } catch (Exception e) {
+            found   = false;
+        }
+        return found;
+    }
+}            

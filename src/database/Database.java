@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class Database {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String URL_DB      = "jdbc:mysql://localhost/chickenland_app";
+    static final String URL_DB      = "jdbc:mysql://localhost/instagram_store";
     static final String username_db = "gika";
     static final String pass_db     = "sayasuka001";
     
@@ -32,15 +32,17 @@ public class Database {
     public static void main(String[] args) {
         try {
             koneksi();
-            String email =  JOptionPane.showInputDialog("masukkan email User");
-            String pass   = JOptionPane.showInputDialog("masukkan password Update");
-            if(updateDataUser(email,pass)){
-                System.out.println("Update berhasil");
-            }else{
-                System.out.println("proses update gagal");
-            }
+            hapusData();
+//            String email =  JOptionPane.showInputDialog("masukkan email User");
+//            String pass   = JOptionPane.showInputDialog("masukkan password Update");
+//            if(updateDataUser(email,pass)){
+//                System.out.println("Update berhasil");
+//            }else{
+//                System.out.println("proses update gagal");
+//            }
+//            delete();
 //            if(login()){
-//                tampildata("transaksi");
+//                delete();
 //            }else{
 //                System.out.println("Login gagal");
 //            }
@@ -83,6 +85,9 @@ public class Database {
             String sql = "SELECT * from loginUser where email='"+username+"' AND password='"+passwd+"'";
             hasil      = stmt.executeQuery(sql);
             while(hasil.next()){
+                String update_dateTime  = "update loginUser SET  last_login=NOW() WHERE email='"+username+"'";
+                PreparedStatement prepare   = conn.prepareStatement(update_dateTime);
+                prepare.execute();
                 status=true;
             }
             return status;
@@ -92,8 +97,6 @@ public class Database {
         }
         
     }
-    
-    
     
     
     
@@ -130,5 +133,22 @@ public class Database {
         return sukses;
     }
     
+    static void hapusData(){
+        String data = JOptionPane.showInputDialog("data yang mau di hapus");
+        if(cekIfDataExists("datashop","kode",data)){
+            try {
+                String query_delete = "DELETE FROM datashop WHERE kode='"+data+"'";
+                PreparedStatement prepare = conn.prepareStatement(query_delete);
+                prepare.execute();
+                System.out.println("Hapus Data Berhasil");
+            } catch (Exception e) {
+                System.err.println("Terjadi kesalahn");
+                System.exit(0);
+            }
+            
+        }else{
+            System.out.println("maaf data tidak dapat ditemukan");
+        }
+    }
     
 }

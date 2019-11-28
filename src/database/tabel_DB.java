@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class tabel_DB extends javax.swing.JFrame {
     private DefaultTableModel model_tb;
+    private db_connection db_module;
 
     /**
      * Creates new form tabel_DB
@@ -20,10 +21,26 @@ public class tabel_DB extends javax.swing.JFrame {
     public tabel_DB() {
         initComponents();
         model_tb = new DefaultTableModel();
+        db_module = new db_connection();
+        
         tabel_data.setModel(model_tb);
         model_tb.addColumn("Kode");
         model_tb.addColumn("Nama");
         model_tb.addColumn("Harga");
+        try {
+            db_module.koneksi();
+            String sql = "SELECT * FROM datashop ";
+            db_module.hasil     = db_module.stmt.executeQuery(sql);
+            while(db_module.hasil.next()){
+                Object[] objk = new Object[3];
+                objk[0]     = db_module.hasil.getString("kode");
+                objk[1]     = db_module.hasil.getString("judul");
+                objk[2]     = db_module.hasil.getString("harga");
+                
+                model_tb.addRow(objk);
+            }
+        } catch (Exception e) {
+        }
     }
 
     /**
